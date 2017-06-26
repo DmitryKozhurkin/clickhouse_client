@@ -55,8 +55,7 @@ class ClickHouseClient {
 		}
 
 		if (options.format !== 'JSONEachRow' && typeof data !== 'string') {
-			const error = new TypeError(`Data must be string with format ${options.format}`);
-			return callback(error);
+			options.format = 'JSONEachRow';
 		}
 
 		let sql = `INSERT INTO ${tablename} FORMAT ${options.format}`;
