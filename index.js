@@ -26,15 +26,23 @@ class ClickHouseClient {
 				database : this.dbname
 			},
 			body : body
-		}, function(err, resp, data) {
+		}, (err, resp, data) => {
 			err = (resp && resp.statusCode !== 200) ? new Error(data) : err;
 			callback(err, data);
 		});
 	}
 
+	post (sql, callback) {
+		this.query(sql, '', callback);
+	}
+
+	get (sql, callback) {
+		this.query(sql, callback);
+	}
+
 	find (sql, callback) {
 		sql = `${sql} FORMAT CSVWithNames`;
-		this.query(sql, null, function(err, data) {
+		this.query(sql, (err, data) => {
 			if (err) {
 				return callback(err);
 			}
