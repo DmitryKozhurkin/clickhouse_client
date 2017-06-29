@@ -9,6 +9,7 @@ class ClickHouseClient {
 		this.host   = options.host || '127.0.0.1';
 		this.port   = options.port || 8123;
 		this.dbname = options.dbname;
+		this.format = options.format || 'JSONEachRow';
 	}
 
 	query (sql, body, callback) {
@@ -54,19 +55,15 @@ class ClickHouseClient {
 		return this.find(sql, (err, data) => callback(err, data && data[0]));
 	}
 
-	insert (tablename, data, options, callback) {
+	insert (tablename, data, options = {}, callback) {
 		if (typeof options === 'function') {
 			callback = options;
-			options = {
-				format: 'JSONEachRow'
-			};
+			options = {};
 		}
 
-		if (options.format !== 'JSONEachRow' && typeof data !== 'string') {
-			options.format = 'JSONEachRow';
-		}
+		const format = options.format || this.format;
 
-		let sql = `INSERT INTO ${tablename} FORMAT ${options.format}`;
+		let sql = `INSERT INTO ${tablename} FORMAT ${format}`;
 		let body = typeof data === 'string' ? data : JSON.stringify(data).slice(1, -1);
 		this.query(sql, body, callback);
 	}
